@@ -28,7 +28,11 @@ Magic = 0xDEADBEEF
 FixedArray<T>(size)
 
 Pair<T1, T2> = record { T1 a, T2 b }
-Map<Key, Value> = Array<UInt32, Map<Key, Value>>
+
+# <                      Format                         >
+# <     Declaraion     >
+# <  Name  >               <        Definition          >
+  Dictionary<Key, Value> = Array<UInt32, Map<Key, Value>>
 
 Maybe<T> = enum<Byte> {
     0 => Unit nothing,
