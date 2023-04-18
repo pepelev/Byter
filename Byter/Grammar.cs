@@ -61,6 +61,8 @@ public sealed class Grammar
     public Parser<None> Comma => Parse.Char(',').IgnoreResult();
     public Parser<None> OpenCurlyBracket => Parse.Char('{').IgnoreResult();
     public Parser<None> CloseCurlyBracket => Parse.Char('}').IgnoreResult();
+    public Parser<None> OpenBracket => Parse.Char('(').IgnoreResult();
+    public Parser<None> CloseBracket => Parse.Char(')').IgnoreResult();
     public Parser<None> LessThan => Parse.Char('<').IgnoreResult();
     public Parser<None> GreaterThan => Parse.Char('>').IgnoreResult();
     public Parser<None> EqualSign => Parse.Char('=').IgnoreResult();
@@ -79,13 +81,23 @@ public sealed class Grammar
         from close in GreaterThan
         select parameterArray;
 
+    public Parser<ImmutableArray<string>> RegularParameters =>
+        from open in OpenBracket
+        from parameters in FieldName.SeparatedBy(Comma.Token())
+        let parameterArray = parameters.ToImmutableArray()
+        where parameterArray.Length > 0 && parameterArray.Distinct().Count() == parameterArray.Length
+        from close in CloseBracket
+        select parameterArray;
+
     public Parser<FormatDeclaration> FormatDeclaration =>
         from name in FormatName
         from whitespace in Whitespace
-        from parameters in GenericParameters.Optional()
+        from genericParameters in GenericParameters.Optional()
+        from regularParameters in RegularParameters.Optional()
         select new FormatDeclaration(
             name,
-            parameters.GetOrElse(ImmutableArray<string>.Empty)
+            genericParameters.GetOrElse(ImmutableArray<string>.Empty),
+            regularParameters.GetOrElse(ImmutableArray<string>.Empty)
         );
 
     public Parser<FormatDefinition> FormatDefinition =>

@@ -88,6 +88,7 @@ public sealed class Tests
             new NamedRecord(
                 new FormatDeclaration(
                     "Person",
+                    ImmutableArray<string>.Empty,
                     ImmutableArray<string>.Empty
                 ),
                 new[] { ("String", "name"), ("Int", "age") }
@@ -116,6 +117,7 @@ Sell = record {
                 new NamedRecord(
                     new FormatDeclaration(
                         "Person",
+                        ImmutableArray<string>.Empty,
                         ImmutableArray<string>.Empty
                     ),
                     new[] { ("String", "name"), ("Int", "age") }
@@ -123,6 +125,7 @@ Sell = record {
                 new NamedRecord(
                     new FormatDeclaration(
                         "Sell",
+                        ImmutableArray<string>.Empty,
                         ImmutableArray<string>.Empty
                     ),
                     new[] { ("Person", "buyer"), ("String", "product"), ("Int", "price") }
@@ -200,6 +203,29 @@ Sell = record {
     }
 
     [Test]
+    public void Regular_Parameter()
+    {
+        var grammar = new Grammar();
+        var records = grammar.FormatDescription.Parse(@"Named(size) = Int<Int>(size)");
+    }
+
+    [Test]
+    [Explicit]
+    public void Failure_Regular_Parameter()
+    {
+        var grammar = new Grammar();
+        var records = grammar.FormatDescription.Parse(@"Named( size ) = 0x1234");
+    }
+
+    [Test]
+    [Explicit]
+    public void Failure_Generic_Type()
+    {
+        var grammar = new Grammar();
+        var records = grammar.File.Parse(@"Named< T> = record { String name, T content }");
+    }
+
+    [Test]
     public void Alias()
     {
         var grammar = new Grammar();
@@ -226,7 +252,7 @@ Sell = record {
     // -   variable length arrays
     // - V enums
     // - V aliases
-    // -   regular parameters
+    // - V regular parameters
     // -   fixed length arrays
     // -   uft8 number format
     // - V hex literals
