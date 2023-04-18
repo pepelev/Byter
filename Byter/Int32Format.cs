@@ -14,3 +14,16 @@ public sealed class Int32Format : Format
         throw new NotImplementedException();
     }
 }
+
+public sealed class GenericPlaceholder : Format
+{
+    public override byte[] Write(object value)
+    {
+        throw new NotImplementedException();
+    }
+
+    public override object Read(byte[] bytes)
+    {
+        throw new NotImplementedException();
+    }
+}

@@ -1,6 +1,6 @@
 ﻿namespace Byter;
 
 public sealed record NamedRecord(
-    string Name,
+    FormatDeclaration Declaration,
     (string Format, string Name)[] Record
 );

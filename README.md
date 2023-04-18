@@ -29,8 +29,13 @@ FixedArray<T>(size)
 
 Pair<T1, T2> = record { T1 a, T2 b }
 
-# <                      Format                         >
-# <     Declaraion     >
+# <                FormatDescription                       >
+# <     Declaration     >
+# <  Name  >               <        Definition             >
+  Named         <T>      = record { String name, T content }
+
+# <                FormatDescription                    >
+# <     Declaration    >
 # <  Name  >               <        Definition          >
   Dictionary<Key, Value> = Array<UInt32, Map<Key, Value>>
 

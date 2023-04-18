@@ -1,4 +1,5 @@
-﻿using FluentAssertions;
+﻿using System.Collections.Immutable;
+using FluentAssertions;
 using NUnit.Framework;
 using Sprache;
 
@@ -85,7 +86,10 @@ public sealed class Tests
 }");
         namedRecord.Should().BeEquivalentTo(
             new NamedRecord(
-                "Person",
+                new FormatDeclaration(
+                    "Person",
+                    ImmutableArray<string>.Empty
+                ),
                 new[] { ("String", "name"), ("Int", "age") }
             )
         );
@@ -110,11 +114,17 @@ Sell = record {
             new[]
             {
                 new NamedRecord(
-                    "Person",
+                    new FormatDeclaration(
+                        "Person",
+                        ImmutableArray<string>.Empty
+                    ),
                     new[] { ("String", "name"), ("Int", "age") }
                 ),
                 new NamedRecord(
-                    "Sell",
+                    new FormatDeclaration(
+                        "Sell",
+                        ImmutableArray<string>.Empty
+                    ),
                     new[] { ("Person", "buyer"), ("String", "product"), ("Int", "price") }
                 )
             }
@@ -139,7 +149,7 @@ Sell = record {
         var scope = Scope.Default;
         foreach (var namedRecord in records)
         {
-            if (scope.Contains(namedRecord.Name))
+            if (scope.Contains(namedRecord.Declaration.Name))
             {
                 throw new Exception("Duplicate name");
             }
@@ -153,15 +163,54 @@ Sell = record {
             }
 
             var newFormat = new RecordFormat(scope, namedRecord);
-            scope = scope.Add(namedRecord.Name, newFormat);
+            scope = scope.Add(namedRecord.Declaration.Name, newFormat);
         }
+    }
+
+    [Test]
+    public void Generic_Type()
+    {
+        var grammar = new Grammar();
+        var records = grammar.File.Parse(@"Named<T> = record { String name, T content }");
+        var scope = Scope.Default;
+        foreach (var namedRecord in records)
+        {
+            if (scope.Contains(namedRecord.Declaration.Name))
+            {
+                throw new Exception("Duplicate name");
+            }
+
+            var innerScope = scope;
+            foreach (var parameter in namedRecord.Declaration.GenericParameters)
+            {
+                innerScope = innerScope.Add(parameter, new GenericPlaceholder());
+            }
+
+            foreach (var (format, fieldName) in namedRecord.Record)
+            {
+                if (!innerScope.Contains(format))
+                {
+                    throw new Exception($"Unknown format name: {format}");
+                }
+            }
+
+            var newFormat = new RecordFormat(scope, namedRecord);
+            scope = scope.Add(namedRecord.Declaration.Name, newFormat);
+        }
+    }
+
+    [Test]
+    public void Alias()
+    {
+        var grammar = new Grammar();
+        var records = grammar.FormatDescriptions.Parse(@"Number<T> = Int32 A = Number<Int32> B = A C = record { String name }");
     }
     // Features:
     // - V records
     // -   generic parameters
     // -   variable length arrays
     // -   enums
-    // -   aliases
+    // - V aliases
     // -   regular parameters
     // -   fixed length arrays
     // -   uft8 number format
@@ -170,4 +219,6 @@ Sell = record {
     // -   7bit encoding
     // -   anonymous types
     // -   comments
+    // -   surrogate pair first name letter
+    // -   endless format (cycles)
 }
