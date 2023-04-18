@@ -245,7 +245,7 @@ Sell = record {
         var grammar = new Grammar();
         var records = grammar.FormatDescriptions.Parse(@"Signature = 0xDEADBEEF");
     }
-    
+
     // Features:
     // - V records
     // - V generic parameters

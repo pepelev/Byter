@@ -3,58 +3,6 @@ using Sprache;
 
 namespace Byter;
 
-public sealed class FormatDescription
-{
-    public FormatDescription(FormatDeclaration declaration, FormatDefinition definition)
-    {
-        Declaration = declaration;
-        Definition = definition;
-    }
-
-    public FormatDeclaration Declaration { get; }
-    public FormatDefinition Definition { get; }
-}
-
-public sealed record EnumVariant(
-    string Name,
-    int Tag,
-    FormatDefinition FormatDefinition
-);
-
-public abstract class FormatDefinition
-{
-    public abstract FormatDefinition Construct(ImmutableArray<string> genericParameters);
-}
-
-public sealed class Alias : FormatDefinition
-{
-    private readonly FormatDeclaration declaration;
-
-    public Alias(FormatDeclaration declaration)
-    {
-        this.declaration = declaration;
-    }
-
-    public override FormatDefinition Construct(ImmutableArray<string> genericParameters)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-public sealed class RecordFormatDefinition : FormatDefinition
-{
-    public FormatDeclaration Declaration { get; }
-    public NamedRecord Record { get; }
-
-
-    public override FormatDefinition Construct(ImmutableArray<string> genericParameters)
-    {
-        if (Declaration.GenericParameters.Length != genericParameters.Length) throw new InvalidOperationException();
-
-        throw new NotImplementedException();
-    }
-}
-
 public sealed class Grammar
 {
     public Parser<None> Whitespace => Parse.WhiteSpace.Many().IgnoreResult();
@@ -178,37 +126,5 @@ public sealed class Grammar
         public static Parser<None> Record => Parse.String("record").IgnoreResult();
         public static Parser<None> Byte => Parse.String("byte").IgnoreResult();
         public static Parser<None> Enum => Parse.String("enum").IgnoreResult();
-    }
-}
-
-public sealed class Const : FormatDefinition
-{
-    private readonly string hex;
-
-    public Const(string hex)
-    {
-        this.hex = hex;
-    }
-
-    public override FormatDefinition Construct(ImmutableArray<string> genericParameters)
-    {
-        throw new NotImplementedException();
-    }
-}
-
-public sealed class EnumFormatDefinition : FormatDefinition
-{
-    private readonly Alias tagFormat;
-    private readonly IEnumerable<EnumVariant> variants;
-
-    public EnumFormatDefinition(Alias tagFormat, IEnumerable<EnumVariant> variants)
-    {
-        this.tagFormat = tagFormat;
-        this.variants = variants;
-    }
-
-    public override FormatDefinition Construct(ImmutableArray<string> genericParameters)
-    {
-        throw new NotImplementedException();
     }
 }

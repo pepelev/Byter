@@ -5,11 +5,14 @@ UInt32 = UnsignedNumber(4@bytes, little endian)
 Int64  = SignedNumber(8@bytes, little endian)
 UInt64 = UnsignedNumber(8@bytes, little endian)
 
-Byte   = byte
-Int32  =   signed 4@bytes little endian
-UInt32 = unsigned 4@bytes little endian
-Int64  =   signed 8@bytes big    endian
-UInt64 = unsigned 8@bytes big    endian 
+Byte           = byte
+Int32          = number   signed 4@bytes little endian
+UInt32         = number unsigned 4@bytes little endian
+Int64          = number   signed 8@bytes big    endian
+UInt64         = number unsigned 8@bytes big    endian
+Utf8Char       = number utf8
+SignedNumber   = number   signed 7bit
+UnsignedNumber = number unsigned 7bit
 
 Array<Size, Item>
 FixedArray<T>(size)
@@ -44,11 +47,19 @@ Maybe<T> = enum<Byte> {
     just    1 => T
 }
 
+List<T> = enum<Byte> {
+    end     0 => Unit,
+    element 1 => record {
+        T       head,
+        List<T> tail
+    }
+}
+
 Block<T>(size) = enum<Byte> {
     empty 0 => Unit,
     block 1 => record {
-        Header header,
-        FixedArray<T>(size)
+        Header              header,
+        FixedArray<T>(size) content
     }
 }
 ```
