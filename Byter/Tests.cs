@@ -205,19 +205,35 @@ Sell = record {
         var grammar = new Grammar();
         var records = grammar.FormatDescriptions.Parse(@"Number<T> = Int32 A = Number<Int32> B = A C = record { String name }");
     }
+
+    [Test]
+    public void Enum()
+    {
+        var grammar = new Grammar();
+        var records = grammar.FormatDescriptions.Parse(@"Maybe<T> = enum<Byte> { nothing 0 => Unit, just 1 => T }");
+    }
+
+    [Test]
+    public void Hex()
+    {
+        var grammar = new Grammar();
+        var records = grammar.FormatDescriptions.Parse(@"Signature = 0xDEADBEEF");
+    }
+    
     // Features:
     // - V records
-    // -   generic parameters
+    // - V generic parameters
     // -   variable length arrays
-    // -   enums
+    // - V enums
     // - V aliases
     // -   regular parameters
     // -   fixed length arrays
     // -   uft8 number format
+    // - V hex literals
     // -   arbitrary number sizes
     // -   number endianness
     // -   7bit encoding
-    // -   anonymous types
+    // - V anonymous types
     // -   comments
     // -   surrogate pair first name letter
     // -   endless format (cycles)

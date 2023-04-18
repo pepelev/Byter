@@ -15,6 +15,12 @@ public sealed class FormatDescription
     public FormatDefinition Definition { get; }
 }
 
+public sealed record EnumVariant(
+    string Name,
+    int Tag,
+    FormatDefinition FormatDefinition
+);
+
 public abstract class FormatDefinition
 {
     public abstract FormatDefinition Construct(ImmutableArray<string> genericParameters);
@@ -58,6 +64,7 @@ public sealed class Grammar
     public Parser<None> LessThan => Parse.Char('<').IgnoreResult();
     public Parser<None> GreaterThan => Parse.Char('>').IgnoreResult();
     public Parser<None> EqualSign => Parse.Char('=').IgnoreResult();
+    public Parser<None> Arrow => Parse.String("=>").IgnoreResult();
 
     public Parser<string> FormatName =>
         from first in Parse.Upper
@@ -74,7 +81,7 @@ public sealed class Grammar
 
     public Parser<FormatDeclaration> FormatDeclaration =>
         from name in FormatName
-        from space in Whitespace
+        from whitespace in Whitespace
         from parameters in GenericParameters.Optional()
         select new FormatDeclaration(
             name,
@@ -83,10 +90,13 @@ public sealed class Grammar
 
     public Parser<FormatDefinition> FormatDefinition =>
         Record.Select(fields => new RecordFormatDefinition())
-            .Or<FormatDefinition>(
-                FormatDeclaration
-                    .Select(declaration => new Alias(declaration))
-            );
+            .Or<FormatDefinition>(Alias)
+            .Or(Enum)
+            .Or(Const);
+
+    public Parser<Alias> Alias =>
+        FormatDeclaration
+            .Select(declaration => new Alias(declaration));
 
     public Parser<string> FieldName =>
         from first in Parse.Lower
@@ -106,6 +116,33 @@ public sealed class Grammar
         from close in CloseCurlyBracket
         select fields.ToArray();
 
+    public Parser<EnumVariant> EnumVariant =>
+        from name in FieldName
+        from space in Whitespace
+        from tag in Parse.Number.Select(int.Parse) // todo overflow
+        from arrow in Arrow.Token()
+        from formatDefinition in FormatDefinition
+        select new EnumVariant(name, tag, formatDefinition);
+
+    public Parser<EnumFormatDefinition> Enum =>
+        from keyword in Keywords.Enum
+        from whitespace in Whitespace
+        from openTag in LessThan
+        from tagFormat in Alias.Token()
+        from closeTag in GreaterThan
+        from whitespace2 in Whitespace
+        from openVariants in OpenCurlyBracket
+        from variants in EnumVariant.SeparatedBy(Comma.Token()).Token() 
+        from closeVariants in CloseCurlyBracket
+        select new EnumFormatDefinition(tagFormat, variants);
+
+    public Parser<Const> Const =>
+        from zero in Parse.Char('0')
+        from x in Parse.Char('x')
+        from hex in Parse.Chars("0123456789ABCDEFabcdef").Repeat(2).AtLeastOnce()
+        select new Const(new string(hex.SelectMany(x => x).ToArray()));
+
+    // todo outdated
     public Parser<NamedRecord> NamedRecord =>
         from declaration in FormatDeclaration
         from equal in EqualSign.Token()
@@ -128,5 +165,38 @@ public sealed class Grammar
     {
         public static Parser<None> Record => Parse.String("record").IgnoreResult();
         public static Parser<None> Byte => Parse.String("byte").IgnoreResult();
+        public static Parser<None> Enum => Parse.String("enum").IgnoreResult();
+    }
+}
+
+public sealed class Const : FormatDefinition
+{
+    private readonly string hex;
+
+    public Const(string hex)
+    {
+        this.hex = hex;
+    }
+
+    public override FormatDefinition Construct(ImmutableArray<string> genericParameters)
+    {
+        throw new NotImplementedException();
+    }
+}
+
+public sealed class EnumFormatDefinition : FormatDefinition
+{
+    private readonly Alias tagFormat;
+    private readonly IEnumerable<EnumVariant> variants;
+
+    public EnumFormatDefinition(Alias tagFormat, IEnumerable<EnumVariant> variants)
+    {
+        this.tagFormat = tagFormat;
+        this.variants = variants;
+    }
+
+    public override FormatDefinition Construct(ImmutableArray<string> genericParameters)
+    {
+        throw new NotImplementedException();
     }
 }

@@ -40,15 +40,15 @@ Pair<T1, T2> = record { T1 a, T2 b }
   Dictionary<Key, Value> = Array<UInt32, Map<Key, Value>>
 
 Maybe<T> = enum<Byte> {
-    0 => Unit nothing,
-    1 => T just
+    nothing 0 => Unit,
+    just    1 => T
 }
 
 Block<T>(size) = enum<Byte> {
-    0 => Unit empty,
-    1 => record {
+    empty 0 => Unit,
+    block 1 => record {
         Header header,
         FixedArray<T>(size)
-    } block
+    }
 }
 ```
