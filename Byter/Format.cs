@@ -3,5 +3,5 @@
 public abstract class Format
 {
     public abstract byte[] Write(object value);
-    public abstract object Read(byte[] bytes);
+    public abstract (int Read, object Value) Read(byte[] bytes);
 }

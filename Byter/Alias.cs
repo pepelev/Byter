@@ -11,7 +11,8 @@ public sealed class Alias : FormatDefinition
         this.declaration = declaration;
     }
 
-    public override FormatDefinition Construct(ImmutableArray<string> genericParameters)
+
+    public override FormatDefinition Construct(ImmutableArray<string> genericParameters, ImmutableArray<long> regularParameters)
     {
         throw new NotImplementedException();
     }

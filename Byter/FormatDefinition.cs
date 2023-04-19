@@ -4,5 +4,7 @@ namespace Byter;
 
 public abstract class FormatDefinition
 {
-    public abstract FormatDefinition Construct(ImmutableArray<string> genericParameters);
+    public abstract FormatDefinition Construct(
+        ImmutableArray<string> genericParameters,
+        ImmutableArray<long> regularParameters);
 }

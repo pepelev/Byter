@@ -13,7 +13,7 @@ public sealed class EnumFormatDefinition : FormatDefinition
         this.variants = variants;
     }
 
-    public override FormatDefinition Construct(ImmutableArray<string> genericParameters)
+    public override FormatDefinition Construct(ImmutableArray<string> genericParameters, ImmutableArray<long> regularParameters)
     {
         throw new NotImplementedException();
     }

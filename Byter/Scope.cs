@@ -16,8 +16,8 @@ public sealed class Scope
 
     public static Scope Default => new(
         ImmutableDictionary<string, Format>.Empty
-            .Add("Int32", new Int32Format())
-            .Add("String", new Int32Format())
+            .Add("Int32", null)
+            .Add("String", null)
     );
 
     public Scope Add(string name, Format format) => new(

@@ -1,16 +1,9 @@
-﻿using System.Collections.Immutable;
+using System.Collections.Immutable;
 
 namespace Byter;
 
-public sealed class Const : FormatDefinition
+public sealed class Utf8Number : FormatDefinition
 {
-    private readonly string hex;
-
-    public Const(string hex)
-    {
-        this.hex = hex;
-    }
-
     public override FormatDefinition Construct(ImmutableArray<string> genericParameters, ImmutableArray<long> regularParameters)
     {
         throw new NotImplementedException();

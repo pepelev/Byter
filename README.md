@@ -6,13 +6,16 @@ Int64  = SignedNumber(8@bytes, little endian)
 UInt64 = UnsignedNumber(8@bytes, little endian)
 
 Byte           = byte
-Int32          = number   signed 4@bytes little endian
+ASCII          = byte allowed [0, 127]
+Int32          = number twos complement signed 4@bytes little endian
 UInt32         = number unsigned 4@bytes little endian
-Int64          = number   signed 8@bytes big    endian
+Int64          = number twos complement signed 8@bytes big    endian
 UInt64         = number unsigned 8@bytes big    endian
 Utf8Char       = number utf8
-SignedNumber   = number   signed 7bit
-UnsignedNumber = number unsigned 7bit
+Zigzag         = number zigzag
+LVLQ           = number left  variable length quantity # https://github.com/kstenerud/vlq/blob/master/vlq-specification.md
+RVLQ           = number right variable length quantity # https://github.com/kstenerud/vlq/blob/master/vlq-specification.md
+TwoRanges      = number unsigned 4@bytes little endian allowed [0, 100_000) or [500_000, 1_000_000)
 
 Array<Size, Item>
 FixedArray<T>(size)

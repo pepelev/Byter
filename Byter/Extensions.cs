@@ -36,5 +36,5 @@ public static class Extensions
         };
     }
 
-    public static Parser<None> IgnoreResult<T>(this Parser<T> parser) => parser.Select(_ => new None());
+    public static Parser<Unit> IgnoreResult<T>(this Parser<T> parser) => parser.Select(_ => new Unit());
 }

@@ -246,21 +246,44 @@ Sell = record {
         var records = grammar.FormatDescriptions.Parse(@"Signature = 0xDEADBEEF");
     }
 
-    // Features:
+    [Test]
+    public void Numbers()
+    {
+        var grammar = new Grammar();
+        var records = grammar.FormatDescriptions.Parse(@"
+Byte   = byte
+Int32  = number   signed 4@bytes little endian
+UInt32 = number unsigned 4@bytes little endian
+Int64  = number   signed 8@bytes big    endian
+UInt64 = number unsigned 8@bytes big    endian");
+    }
+
+    // Description:
     // - V records
     // - V generic parameters
-    // -   variable length arrays
     // - V enums
     // - V aliases
     // - V regular parameters
-    // -   fixed length arrays
-    // -   uft8 number format
+    // -   uft8 encoding
     // - V hex literals
-    // -   arbitrary number sizes
-    // -   number endianness
+    // - V arbitrary number sizes
+    // - V number endianness
     // -   7bit encoding
-    // - V anonymous types
+    // -   anonymous types (use general format description instead of alias only)
     // -   comments
     // -   surrogate pair first name letter
-    // -   endless format (cycles)
+    // -   checks: endless format (cycles)
+
+    // Write-Read:
+    // -    fixed numbers
+    // -    uft8 number format
+    // -    fixed length arrays
+    // -    variable length arrays
+    // -    records
+    // -    generic parameters
+    // -    enums
+    // -    regular parameters
+    // -    hex
+    // -    arbitrary number sizes
+    // -    7bit encoding
 }
