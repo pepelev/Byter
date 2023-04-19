@@ -108,7 +108,7 @@ public sealed class Grammar
     public Parser<FixedNumber> Byte =>
         Keywords.Byte.Select(_ => new FixedNumber(Byter.FixedNumber.Type.Unsigned, 1, Byter.FixedNumber.Endianness.Little));
 
-    private Parser<T> Case<T>(params (Parser<Unit> Parser, T Result)[] variants)
+    private static Parser<T> Case<T>(params (Parser<Unit> Parser, T Result)[] variants)
     {
         if (variants.Length == 0)
         {
