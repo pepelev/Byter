@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace Byter;
+﻿namespace Byter;
 
 public sealed class Const : FormatDefinition
 {
@@ -11,8 +9,5 @@ public sealed class Const : FormatDefinition
         this.hex = hex;
     }
 
-    public override FormatDefinition Construct(ImmutableArray<string> genericParameters, ImmutableArray<long> regularParameters)
-    {
-        throw new NotImplementedException();
-    }
+    public override string ToString() => $"0x{hex}";
 }

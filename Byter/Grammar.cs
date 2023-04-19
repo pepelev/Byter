@@ -157,7 +157,7 @@ public sealed class Grammar
         from declaration in FormatDeclaration
         from equal in EqualSign.Token()
         from definition in FormatDefinition
-        select new FormatDescription(declaration, definition);
+        select new FormatDescription(Scope.Default /*todo not default*/, declaration, definition);
 
     public Parser<IEnumerable<FormatDescription>> FormatDescriptions =>
         FormatDescription.Token().Many().End();

@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace Byter;
+﻿namespace Byter;
 
 public sealed class Alias : FormatDefinition
 {
@@ -11,9 +9,5 @@ public sealed class Alias : FormatDefinition
         this.declaration = declaration;
     }
 
-
-    public override FormatDefinition Construct(ImmutableArray<string> genericParameters, ImmutableArray<long> regularParameters)
-    {
-        throw new NotImplementedException();
-    }
+    public override string ToString() => declaration.ToString();
 }

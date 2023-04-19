@@ -1,5 +1,3 @@
-using System.Collections.Immutable;
-
 namespace Byter;
 
 public sealed class FixedNumber : FormatDefinition
@@ -25,10 +23,5 @@ public sealed class FixedNumber : FormatDefinition
     {
         Little,
         Big
-    }
-
-    public override FormatDefinition Construct(ImmutableArray<string> genericParameters, ImmutableArray<long> regularParameters)
-    {
-        throw new NotImplementedException();
     }
 }

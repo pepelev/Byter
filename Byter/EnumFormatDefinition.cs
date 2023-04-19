@@ -1,6 +1,4 @@
-﻿using System.Collections.Immutable;
-
-namespace Byter;
+﻿namespace Byter;
 
 public sealed class EnumFormatDefinition : FormatDefinition
 {
@@ -13,8 +11,5 @@ public sealed class EnumFormatDefinition : FormatDefinition
         this.variants = variants;
     }
 
-    public override FormatDefinition Construct(ImmutableArray<string> genericParameters, ImmutableArray<long> regularParameters)
-    {
-        throw new NotImplementedException();
-    }
+    public override string ToString() => $"enum<{tagFormat}> {{ {string.Join(", ", variants)} }}";
 }

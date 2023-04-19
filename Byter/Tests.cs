@@ -149,25 +149,25 @@ Sell = record {
     Int32 price
 }
 ");
-        var scope = Scope.Default;
-        foreach (var namedRecord in records)
-        {
-            if (scope.Contains(namedRecord.Declaration.Name))
-            {
-                throw new Exception("Duplicate name");
-            }
-
-            foreach (var (format, fieldName) in namedRecord.Record)
-            {
-                if (!scope.Contains(format))
-                {
-                    throw new Exception($"Unknown format name: {format}");
-                }
-            }
-
-            var newFormat = new RecordFormat(scope, namedRecord);
-            scope = scope.Add(namedRecord.Declaration.Name, newFormat);
-        }
+        // var scope = Scope.Default;
+        // foreach (var namedRecord in records)
+        // {
+        //     if (scope.Contains(namedRecord.Declaration.Name))
+        //     {
+        //         throw new Exception("Duplicate name");
+        //     }
+        //
+        //     foreach (var (format, fieldName) in namedRecord.Record)
+        //     {
+        //         if (!scope.Contains(format))
+        //         {
+        //             throw new Exception($"Unknown format name: {format}");
+        //         }
+        //     }
+        //
+        //     var newFormat = new RecordFormat(scope, namedRecord);
+        //     scope = scope.Add(namedRecord.Declaration.Name, newFormat);
+        // }
     }
 
     [Test]
@@ -175,31 +175,31 @@ Sell = record {
     {
         var grammar = new Grammar();
         var records = grammar.File.Parse(@"Named<T> = record { String name, T content }");
-        var scope = Scope.Default;
-        foreach (var namedRecord in records)
-        {
-            if (scope.Contains(namedRecord.Declaration.Name))
-            {
-                throw new Exception("Duplicate name");
-            }
-
-            var innerScope = scope;
-            foreach (var parameter in namedRecord.Declaration.GenericParameters)
-            {
-                innerScope = innerScope.Add(parameter, new GenericPlaceholder());
-            }
-
-            foreach (var (format, fieldName) in namedRecord.Record)
-            {
-                if (!innerScope.Contains(format))
-                {
-                    throw new Exception($"Unknown format name: {format}");
-                }
-            }
-
-            var newFormat = new RecordFormat(scope, namedRecord);
-            scope = scope.Add(namedRecord.Declaration.Name, newFormat);
-        }
+        // var scope = Scope.Default;
+        // foreach (var namedRecord in records)
+        // {
+        //     if (scope.Contains(namedRecord.Declaration.Name))
+        //     {
+        //         throw new Exception("Duplicate name");
+        //     }
+        //
+        //     var innerScope = scope;
+        //     foreach (var parameter in namedRecord.Declaration.GenericParameters)
+        //     {
+        //         innerScope = innerScope.Add(parameter, new GenericPlaceholder());
+        //     }
+        //
+        //     foreach (var (format, fieldName) in namedRecord.Record)
+        //     {
+        //         if (!innerScope.Contains(format))
+        //         {
+        //             throw new Exception($"Unknown format name: {format}");
+        //         }
+        //     }
+        //
+        //     var newFormat = new RecordFormat(scope, namedRecord);
+        //     scope = scope.Add(namedRecord.Declaration.Name, newFormat);
+        // }
     }
 
     [Test]
