@@ -100,8 +100,7 @@ public sealed class Grammar
         select new EnumFormatDefinition(tagFormat, variants.ToList());
 
     public Parser<Const> Const =>
-        from zero in Parse.Char('0')
-        from x in Parse.Char('x')
+        from prefix in Parse.String("0x")
         from hex in Parse.Chars("0123456789ABCDEFabcdef").Repeat(2).AtLeastOnce()
         select new Const(new string(hex.SelectMany(x => x).ToArray()));
 
@@ -150,7 +149,7 @@ public sealed class Grammar
         from declaration in FormatDeclaration
         from equal in EqualSign.Token()
         from definition in FormatDefinition
-        select new FormatDescription(Scope.Default /*todo not default*/, declaration, definition);
+        select new FormatDescription(Scope.Empty /*todo not default*/, declaration, definition);
 
     public Parser<IEnumerable<FormatDescription>> FormatDescriptions =>
         FormatDescription.Token().Many().End();
