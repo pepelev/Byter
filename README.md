@@ -1,10 +1,4 @@
 ```
-Byte   = UnsignedNumber(1@bytes)
-Int32  = SignedNumber(4@bytes, little endian)
-UInt32 = UnsignedNumber(4@bytes, little endian)
-Int64  = SignedNumber(8@bytes, little endian)
-UInt64 = UnsignedNumber(8@bytes, little endian)
-
 Byte           = byte
 ASCII          = byte allowed [0, 127]
 Int32          = number twos complement signed 4@bytes little endian
@@ -56,6 +50,11 @@ List<T> = enum<Byte> {
         T       head,
         List<T> tail
     }
+}
+
+Buffer(size) = record {
+    Array<String>(size) names,
+    Array<UInt32>(size) values
 }
 
 Block<T>(size) = enum<Byte> {
