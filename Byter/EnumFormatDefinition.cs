@@ -12,4 +12,5 @@ public sealed class EnumFormatDefinition : FormatDefinition
     }
 
     public override string ToString() => $"enum<{tagFormat}> {{ {string.Join(", ", variants)} }}";
+    public override T Accept<T>(Visitor<T> visitor) => visitor.Visit(this);
 }

@@ -104,8 +104,37 @@ public sealed class Grammar
         from hex in Parse.Chars("0123456789ABCDEFabcdef").Repeat(2).AtLeastOnce()
         select new Const(new string(hex.SelectMany(x => x).ToArray()));
 
-    public Parser<FixedNumber> Byte =>
-        Keywords.Byte.Select(_ => new FixedNumber(Byter.FixedNumber.Type.Unsigned, 1, Byter.FixedNumber.Endianness.Little));
+    public Parser<TwosComplementNumber> Byte =>
+        Keywords.Byte.Select(_ => new TwosComplementNumber(TwosComplementNumber.Type.Unsigned, 1, TwosComplementNumber.Endianness.Little));
+
+    public Parser<TwosComplementNumber> FixedNumber =>
+        from number in Keywords.Number
+        from whitespace in Whitespace
+        from type in Case(
+            (Keywords.Signed, TwosComplementNumber.Type.Signed),
+            (Keywords.Unsigned, TwosComplementNumber.Type.Unsigned)
+        )
+        from whitespace2 in Whitespace
+        from size in Parse.Number.Select(int.Parse) // todo overflow
+        from unitOfMeasure in UnitOfMeasure
+        from bytes in Keywords.Bytes
+        from whitespace3 in Whitespace
+        from endianness in Case(
+            (Keywords.Little, TwosComplementNumber.Endianness.Little),
+            (Keywords.Big, TwosComplementNumber.Endianness.Big)
+        )
+        from whitespace4 in Whitespace
+        from endian in Keywords.Endian.Select(y => y)
+        select new TwosComplementNumber(type, size, endianness);
+
+    public Parser<FormatDescription> FormatDescription =>
+        from declaration in FormatDeclaration
+        from equal in EqualSign.Token()
+        from definition in FormatDefinition
+        select new FormatDescription(Scope.Empty /*todo not default*/, declaration, definition);
+
+    public Parser<IEnumerable<FormatDescription>> FormatDescriptions =>
+        FormatDescription.Token().Many().End();
 
     private static Parser<T> Case<T>(params (Parser<Unit> Parser, T Result)[] variants)
     {
@@ -124,35 +153,6 @@ public sealed class Grammar
 
         return parser;
     }
-
-    public Parser<FixedNumber> FixedNumber =>
-        from number in Keywords.Number
-        from whitespace in Whitespace
-        from type in Case(
-            (Keywords.Signed, Byter.FixedNumber.Type.Signed),
-            (Keywords.Unsigned, Byter.FixedNumber.Type.Unsigned)
-        )
-        from whitespace2 in Whitespace
-        from size in Parse.Number.Select(int.Parse) // todo overflow
-        from unitOfMeasure in UnitOfMeasure
-        from bytes in Keywords.Bytes
-        from whitespace3 in Whitespace
-        from endianness in Case(
-            (Keywords.Little, Byter.FixedNumber.Endianness.Little),
-            (Keywords.Big, Byter.FixedNumber.Endianness.Big)
-        )
-        from whitespace4 in Whitespace
-        from endian in Keywords.Endian.Select(y => y)
-        select new FixedNumber(type, size, endianness);
-
-    public Parser<FormatDescription> FormatDescription =>
-        from declaration in FormatDeclaration
-        from equal in EqualSign.Token()
-        from definition in FormatDefinition
-        select new FormatDescription(Scope.Empty /*todo not default*/, declaration, definition);
-
-    public Parser<IEnumerable<FormatDescription>> FormatDescriptions =>
-        FormatDescription.Token().Many().End();
 
     public static class Keywords
     {

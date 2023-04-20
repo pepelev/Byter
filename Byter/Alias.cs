@@ -10,4 +10,5 @@ public sealed class Alias : FormatDefinition
     }
 
     public override string ToString() => declaration.ToString();
+    public override T Accept<T>(Visitor<T> visitor) => visitor.Visit(this);
 }
