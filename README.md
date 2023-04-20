@@ -1,15 +1,17 @@
 ```
-Byte           = byte
-ASCII          = byte allowed [0, 127]
-Int32          = number twos complement signed 4@bytes little endian
-UInt32         = number unsigned 4@bytes little endian
-Int64          = number twos complement signed 8@bytes big    endian
-UInt64         = number unsigned 8@bytes big    endian
+!Byter 1.0
+
+Byte           = number byte
+ASCII          = number byte allowed [0, 127]
+Int32          = number twos complement signed little endian 4@bytes
+UInt32         = number               unsigned little endian 4@bytes
+Int64          = number twos complement signed big    endian 8@bytes
+UInt64         = number               unsigned big    endian 8@bytes
+TwoRanges      = number               unsigned little endian 4@bytes allowed [0, 100_000) or [500_000, 1_000_000)
 Utf8Char       = number utf8
 Zigzag         = number zigzag
 LVLQ           = number left  variable length quantity # https://github.com/kstenerud/vlq/blob/master/vlq-specification.md
 RVLQ           = number right variable length quantity # https://github.com/kstenerud/vlq/blob/master/vlq-specification.md
-TwoRanges      = number unsigned 4@bytes little endian allowed [0, 100_000) or [500_000, 1_000_000)
 
 Array<Size, Item>
 FixedArray<T>(size)
