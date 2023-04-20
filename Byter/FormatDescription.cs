@@ -12,6 +12,5 @@ public sealed class FormatDescription
     public Scope Scope { get; }
     public FormatDeclaration Declaration { get; }
     public FormatDefinition Definition { get; }
-
     public override string ToString() => $"{Declaration} = {Definition}";
 }

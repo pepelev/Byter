@@ -13,7 +13,7 @@ public sealed class Tests
         var grammar = new Grammar();
         var field = grammar.Field.Parse("String name");
         Assert.AreEqual(
-            ("String", "name"),
+            new RecordField("String", "name"),
             field
         );
     }
@@ -32,7 +32,7 @@ public sealed class Tests
         var grammar = new Grammar();
         var fields = grammar.Record.Parse("record{String name}");
         CollectionAssert.AreEqual(
-            new[] { ("String", "name") },
+            new[] { new RecordField("String", "name") },
             fields
         );
     }
@@ -43,7 +43,11 @@ public sealed class Tests
         var grammar = new Grammar();
         var fields = grammar.Record.Parse("record{String name,Int age}");
         CollectionAssert.AreEqual(
-            new[] { ("String", "name"), ("Int", "age") },
+            new[]
+            {
+                new RecordField("String", "name"),
+                new RecordField("Int", "age")
+            },
             fields
         );
     }
@@ -57,7 +61,11 @@ public sealed class Tests
     Int age
 }");
         CollectionAssert.AreEqual(
-            new[] { ("String", "name"), ("Int", "age") },
+            new[]
+            {
+                new RecordField("String", "name"),
+                new RecordField("Int", "age")
+            },
             fields
         );
     }
@@ -71,110 +79,37 @@ public sealed class Tests
     Int age,
 }");
         CollectionAssert.AreEqual(
-            new[] { ("String", "name"), ("Int", "age") },
+            new[]
+            {
+                new RecordField("String", "name"),
+                new RecordField("Int", "age")
+            },
             fields
         );
     }
 
     [Test]
-    public void Named_Record()
+    public void Record()
     {
         var grammar = new Grammar();
-        var namedRecord = grammar.NamedRecord.Parse(@"Person = record {
+        var record = grammar.Record.Parse(@"record {
     String name,
     Int age,
 }");
-        namedRecord.Should().BeEquivalentTo(
-            new NamedRecord(
-                new FormatDeclaration(
-                    "Person",
-                    ImmutableArray<string>.Empty,
-                    ImmutableArray<string>.Empty
-                ),
-                new[] { ("String", "name"), ("Int", "age") }
-            )
-        );
-    }
-
-    [Test]
-    public void Several_Named_Records()
-    {
-        var grammar = new Grammar();
-        var records = grammar.File.Parse(@"
-Person = record {
-    String name,
-    Int age,
-}
-Sell = record {
-    Person buyer,
-    String product,
-    Int price
-}
-");
-        records.Should().BeEquivalentTo(
+        record.Should().BeEquivalentTo(
             new[]
             {
-                new NamedRecord(
-                    new FormatDeclaration(
-                        "Person",
-                        ImmutableArray<string>.Empty,
-                        ImmutableArray<string>.Empty
-                    ),
-                    new[] { ("String", "name"), ("Int", "age") }
-                ),
-                new NamedRecord(
-                    new FormatDeclaration(
-                        "Sell",
-                        ImmutableArray<string>.Empty,
-                        ImmutableArray<string>.Empty
-                    ),
-                    new[] { ("Person", "buyer"), ("String", "product"), ("Int", "price") }
-                )
+                new RecordField("String", "name"),
+                new RecordField("Int", "age")
             }
         );
-    }
-
-    [Test]
-    public void Several_Record_Formats()
-    {
-        var grammar = new Grammar();
-        var records = grammar.File.Parse(@"
-Person = record {
-    String name,
-    Int32 age,
-}
-Sell = record {
-    Person buyer,
-    String product,
-    Int32 price
-}
-");
-        // var scope = Scope.Default;
-        // foreach (var namedRecord in records)
-        // {
-        //     if (scope.Contains(namedRecord.Declaration.Name))
-        //     {
-        //         throw new Exception("Duplicate name");
-        //     }
-        //
-        //     foreach (var (format, fieldName) in namedRecord.Record)
-        //     {
-        //         if (!scope.Contains(format))
-        //         {
-        //             throw new Exception($"Unknown format name: {format}");
-        //         }
-        //     }
-        //
-        //     var newFormat = new RecordFormat(scope, namedRecord);
-        //     scope = scope.Add(namedRecord.Declaration.Name, newFormat);
-        // }
     }
 
     [Test]
     public void Generic_Type()
     {
         var grammar = new Grammar();
-        var records = grammar.File.Parse(@"Named<T> = record { String name, T content }");
+        var records = grammar.FormatDescriptions.Parse(@"Named<T> = record { String name, T content }");
         // var scope = Scope.Default;
         // foreach (var namedRecord in records)
         // {
@@ -222,7 +157,7 @@ Sell = record {
     public void Failure_Generic_Type()
     {
         var grammar = new Grammar();
-        var records = grammar.File.Parse(@"Named< T> = record { String name, T content }");
+        var records = grammar.FormatDescriptions.Parse(@"Named< T> = record { String name, T content }");
     }
 
     [Test]

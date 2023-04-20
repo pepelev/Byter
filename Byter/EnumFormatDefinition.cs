@@ -3,9 +3,9 @@
 public sealed class EnumFormatDefinition : FormatDefinition
 {
     private readonly Alias tagFormat;
-    private readonly IEnumerable<EnumVariant> variants;
+    private readonly IReadOnlyCollection<EnumVariant> variants;
 
-    public EnumFormatDefinition(Alias tagFormat, IEnumerable<EnumVariant> variants)
+    public EnumFormatDefinition(Alias tagFormat, IReadOnlyCollection<EnumVariant> variants)
     {
         this.tagFormat = tagFormat;
         this.variants = variants;

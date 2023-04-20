@@ -50,7 +50,7 @@ public sealed class Grammar
         );
 
     public Parser<FormatDefinition> FormatDefinition =>
-        Record.Select(fields => new RecordFormatDefinition())
+        Record.Select(fields => new RecordFormatDefinition(fields))
             .Or<FormatDefinition>(Alias)
             .Or(Enum)
             .Or(Const)
@@ -66,13 +66,13 @@ public sealed class Grammar
         from rest in Parse.LetterOrDigit.Many().Text()
         select first + rest;
 
-    public Parser<(string Format, string Name)> Field =>
+    public Parser<RecordField> Field =>
         from format in FormatName
         from space in Whitespace
         from name in FieldName
-        select (format, name);
+        select new RecordField(format, name);
 
-    public Parser<(string Format, string Name)[]> Record =>
+    public Parser<RecordField[]> Record =>
         from keyword in Keywords.Record.Token()
         from open in OpenCurlyBracket
         from fields in Field.SeparatedBy(Comma.Token()).Token()
@@ -95,9 +95,9 @@ public sealed class Grammar
         from closeTag in GreaterThan
         from whitespace2 in Whitespace
         from openVariants in OpenCurlyBracket
-        from variants in EnumVariant.SeparatedBy(Comma.Token()).Token() 
+        from variants in EnumVariant.SeparatedBy(Comma.Token()).Token()
         from closeVariants in CloseCurlyBracket
-        select new EnumFormatDefinition(tagFormat, variants);
+        select new EnumFormatDefinition(tagFormat, variants.ToList());
 
     public Parser<Const> Const =>
         from zero in Parse.Char('0')
@@ -146,13 +146,6 @@ public sealed class Grammar
         from endian in Keywords.Endian.Select(y => y)
         select new FixedNumber(type, size, endianness);
 
-    // todo outdated
-    public Parser<NamedRecord> NamedRecord =>
-        from declaration in FormatDeclaration
-        from equal in EqualSign.Token()
-        from record in Record
-        select new NamedRecord(declaration, record);
-
     public Parser<FormatDescription> FormatDescription =>
         from declaration in FormatDeclaration
         from equal in EqualSign.Token()
@@ -161,9 +154,6 @@ public sealed class Grammar
 
     public Parser<IEnumerable<FormatDescription>> FormatDescriptions =>
         FormatDescription.Token().Many().End();
-
-    public Parser<IEnumerable<NamedRecord>> File =>
-        NamedRecord.Token().Many().End();
 
     public static class Keywords
     {

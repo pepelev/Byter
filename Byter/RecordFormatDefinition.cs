@@ -2,6 +2,11 @@
 
 public sealed class RecordFormatDefinition : FormatDefinition
 {
-    public FormatDeclaration Declaration { get; }
-    public NamedRecord Record { get; }
+    public RecordFormatDefinition(IReadOnlyCollection<RecordField> fields)
+    {
+        Fields = fields;
+    }
+
+    public IReadOnlyCollection<RecordField> Fields { get; }
+    public override string ToString() => $"record {{ {string.Join(", ", Fields)} }}";
 }
