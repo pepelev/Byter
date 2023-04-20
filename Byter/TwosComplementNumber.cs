@@ -2,15 +2,10 @@ namespace Byter;
 
 public sealed class TwosComplementNumber : FormatDefinition
 {
-    private readonly Type type;
-    private readonly int size;
-    private readonly Endianness endianness;
-
-    public TwosComplementNumber(Type type, int size, Endianness endianness)
+    public enum Endianness : byte
     {
-        this.type = type;
-        this.size = size;
-        this.endianness = endianness;
+        Little,
+        Big
     }
 
     public enum Type : byte
@@ -18,11 +13,16 @@ public sealed class TwosComplementNumber : FormatDefinition
         Signed,
         Unsigned
     }
-    
-    public enum Endianness : byte
+
+    private readonly Endianness endianness;
+    private readonly int size;
+    private readonly Type type;
+
+    public TwosComplementNumber(Type type, int size, Endianness endianness)
     {
-        Little,
-        Big
+        this.type = type;
+        this.size = size;
+        this.endianness = endianness;
     }
 
     public override T Accept<T>(Visitor<T> visitor) => visitor.Visit(this);

@@ -1,5 +1,4 @@
-﻿using System.Collections.Immutable;
-using FluentAssertions;
+﻿using FluentAssertions;
 using NUnit.Framework;
 using Sprache;
 
